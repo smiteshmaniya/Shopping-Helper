@@ -30,9 +30,8 @@ export default function Logout() {
   const logoutFun = async () => {
     try {
       const whoisLoggedIn = localStorage.getItem("whoIsLoggedIn");
-      const url = `${API}/api/logout${
-        whoisLoggedIn === "customer" ? "Customer" : "Shop"
-      }`;
+      //await axios.get(`${API}/api/logoutShop`);
+      const url = `${API}/api/logout`;
       const response = await axios.get(url);
       if (response.data.statusCode === 200) {
         ShowToast({
@@ -45,8 +44,15 @@ export default function Logout() {
         localStorage.removeItem("name");
         navigate("/");
         window.location.reload();
+      } else {
+        ShowToast({
+          title: "Error!",
+          description: "something went wrong.",
+          status: "error",
+        });
       }
     } catch (err) {
+      console.log("error:", err);
       ShowToast({
         title: "Error!",
         description: err.response.data.message,

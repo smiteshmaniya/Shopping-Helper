@@ -265,6 +265,11 @@ module.exports = {
         maxAge: 0,
         httpOnly: true,
       });
+
+      res.cookie("ct", "", {
+        maxAge: 0,
+        httpOnly: true,
+      });
       res.status(200).json({
         status: true,
         statusCode: 200,
@@ -333,7 +338,7 @@ module.exports = {
 
   update_shop_controller: async (req, res) => {
     try {
-      const _id = req.params.id;
+      const _id = req.id;
       const user = await shop_schema.findByIdAndUpdate(_id, req.body, {
         new: true,
       });

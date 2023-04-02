@@ -27,16 +27,21 @@ export default function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode();
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [whoIsLoggedin, setWhoIsLoggedIn] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+
+  console.log(profileImage);
   useEffect(() => {
     if (localStorage.getItem("token") != null) {
       setIsLoggedin(true);
+      setProfileImage(localStorage.getItem("profileUrl"));
+      console.log("url is ", profileImage);
     }
     setWhoIsLoggedIn(localStorage.getItem("whoIsLoggedIn"));
   }, []);
 
   useEffect(() => {
     console.log("isuser ", isuser);
-  }, [isuser]);
+  }, [isuser, isLoggedin]);
   const handleLogout = () => {
     setisUser("");
     console.log("logout....");
@@ -66,7 +71,11 @@ export default function Navbar() {
                   >
                     <Avatar
                       size={"sm"}
-                      src={`${process.env.PUBLIC_URL}/images/account_logo.png`}
+                      src={`${
+                        profileImage
+                          ? profileImage
+                          : process.env.PUBLIC_URL + "/images/account_logo.png"
+                      }`}
                     />
                   </MenuButton>
                   <MenuList alignItems={"center"} zIndex={3}>
@@ -74,7 +83,12 @@ export default function Navbar() {
                     <Center>
                       <Avatar
                         size={"2xl"}
-                        src={`${process.env.PUBLIC_URL}/images/account_logo.png`}
+                        src={`${
+                          profileImage
+                            ? profileImage
+                            : process.env.PUBLIC_URL +
+                              "/images/account_logo.png"
+                        }`}
                       />
                     </Center>
                     <br />
@@ -113,6 +127,10 @@ export default function Navbar() {
                         <Link to="/">
                           {" "}
                           <MenuItem>Home</MenuItem>{" "}
+                        </Link>
+                        <Link to="/shopprofile">
+                          {" "}
+                          <MenuItem>Profile</MenuItem>{" "}
                         </Link>
                         <Link to="/addproduct">
                           {" "}

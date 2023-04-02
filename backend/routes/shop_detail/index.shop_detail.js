@@ -13,6 +13,7 @@ const {
   shop_register_verify,
   shopkeeper_forgot_password,
   shopkeeper_forgot_verify_password,
+  one_shop_controller,
 } = require("../../controllers/shop.controller");
 
 routes.post("/shop_register", register_shop_controller);
@@ -27,17 +28,18 @@ routes.get("/shop_register", all_shops_controller);
 
 // routes.get('/shop_register', AuthenticateShop, one_shop_controller);
 
-routes.put("/shop_register/:id", AuthenticateShop, update_shop_controller);
+routes.get("/one_shop", AuthenticateShop, one_shop_controller);
+routes.put("/shop_register", AuthenticateShop, update_shop_controller);
 
 routes.delete("/shop_register/:id", AuthenticateShop, delete_shop_controller);
 
 routes.post("/shop_login", login_shop_controller);
 
-routes.get("/logoutShop", AuthenticateShop, logout_shop_controller);
-
 routes.delete("/delete", delete_all);
 
 //searching shops
 routes.get("/searchShop/:pincode", search_shop_controller);
+
+routes.get("/logout", logout_shop_controller);
 
 module.exports = routes;

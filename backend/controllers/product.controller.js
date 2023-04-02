@@ -269,12 +269,4 @@ module.exports = {
       res.send("error");
     }
   },
-  deleteProductImage: async (req, res) => {
-    try {
-      await product_Schema.deleteMany({});
-      res.send("successs");
-    } catch (error) {
-      res.send("error");
-    }
-  },
 };

@@ -21,41 +21,12 @@ import { userContext } from "../Routes/MainRoute";
 import axios from "axios";
 import showToast from "./partials/showToast";
 export default function Login() {
-  // const { isuser, setisUser } = useContext(userContext)
+  const { setProfileImage } = useContext(userContext);
   const toast = useToast();
   const navigate = useNavigate();
   const [isShopkeeper, setShopkeeper] = useState(false);
   const [loginDetail, setLoginDetail] = useState({ email: "", password: "" });
   const [isBtnLoading, setIsBtnLoading] = useState(false);
-  // const Location = useLocation();
-  // console.log(Location.pathname);
-  // const isverified = new URL(Location.pathname).searchParams.get("verified");
-  // useEffect(() => {
-  //   if (isverified != null) {
-  //     showToast(toast, {
-  //       title: "Login successfull",
-  //       description: "You are now logged in",
-  //       status: "success",
-  //     });
-  //   }
-  // }, []);
-  // useEffect(() => {
-
-  // }, [isShopkeeper]);
-
-  // // This will give a message in type of alert that can be remove in 3s
-  // const ShowToast = (details) => {
-  //   toast({
-  //     ...details,
-  //     duration: 3000,
-  //     isClosable: true,
-  //     position: "bottom-right",
-  //     variant:
-  //       localStorage.getItem("chakra-ui-color-mode") === "light"
-  //         ? "subtle"
-  //         : "solid",
-  //   });
-  // };
 
   const userLogin = (e) => {
     const isShopkeeper = e.target.value;
@@ -95,6 +66,10 @@ export default function Login() {
           isShopkeeper ? "shopkeeper" : "customer"
         );
         localStorage.setItem(
+          "profileUrl",
+          response.data.userData.profileImage.imageUrl
+        );
+        localStorage.setItem(
           "name",
           response.data.userData.name
             ? response.data.userData.name
@@ -102,6 +77,12 @@ export default function Login() {
         );
         navigate("/");
         window.location.reload();
+      } else {
+        showToast(toast, {
+          title: "Loing Failed!", // this statusText is shows bad request if staus code is 400 like
+          description: "Login",
+          status: "error",
+        });
       }
     } catch (err) {
       setIsBtnLoading(false); // for stop btn loading effect

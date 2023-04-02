@@ -13,14 +13,18 @@ import Errorpage from "../Components/partials/Errorpage";
 import AddProduct from "../Components/Shop/AddProduct";
 import ShopProducts from "../Components/Shop/ShopProducts";
 import EditShopProduct from "../Components/Shop/EditShopProduct";
+import ShopKeeperProfile from "../Components/Shop/ShopKeeperProfile";
 
 export const userContext = createContext([]);
 
 export const MainRoute = () => {
   const [isuser, setisuser] = useState("");
+  const [profileImage, setProfileImage] = useState("");
   return (
     <>
-      <userContext.Provider value={{ isuser, setisuser }}>
+      <userContext.Provider
+        value={{ isuser, setisuser, profileImage, setProfileImage }}
+      >
         <Navbar />
         <Box minH={"50vh"}>
           <Routes>
@@ -50,6 +54,12 @@ export const MainRoute = () => {
               exact
               path="/editproduct/:proudctId"
               element={<EditShopProduct />}
+            ></Route>
+
+            <Route
+              exact
+              path="/shopprofile"
+              element={<ShopKeeperProfile />}
             ></Route>
 
             <Route path="*" element={<Errorpage />}></Route>

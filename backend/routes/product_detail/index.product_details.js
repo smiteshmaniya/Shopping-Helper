@@ -13,6 +13,7 @@ const {
   image_controller,
   get_all_products,
   delete_all,
+  deleteProductImage,
 } = require("../../controllers/product.controller");
 const multer = require("multer");
 const path = require("path");
@@ -74,5 +75,7 @@ routes.delete(
 );
 
 routes.delete("/deleteProduct", delete_all);
+
+//routes.put("/productDetail/deleteImage", deleteProductImage);
 
 module.exports = routes;

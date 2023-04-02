@@ -66,7 +66,6 @@ export default function EditShopProduct() {
     description: "",
     stock: "",
     price: "",
-    tags: [],
   };
   const [productDetail, setproductDetail] = useState(initalValue);
   const [files, setFiles] = useState([]);
@@ -101,8 +100,9 @@ export default function EditShopProduct() {
         description: data.data.userdata.description,
         price: data.data.userdata.price,
         stock: data.data.userdata.stock,
-        tags: data.data.userdata.tags,
       });
+      setTags(data.data.userdata.tags);
+      console.log("tags:", productDetail.tags);
       setDefaultImages(data.data.userdata.images);
     } catch (err) {
       console.log("error: ", err);
@@ -187,7 +187,7 @@ export default function EditShopProduct() {
     const productDetail_split = {
       ...productDetail,
       images: [...arr, ...defaultImages],
-      tags,
+      tags: tags,
     };
     console.log("Product Detail: ", productDetail_split);
     try {
@@ -199,7 +199,8 @@ export default function EditShopProduct() {
       console.log("result of addproduct: ", res);
       console.log("code.", res.data.stautsCode);
       if (res.data.stautsCode === 200) {
-        setproductDetail(initalValue);
+        //setproductDetail(initalValue);
+        getProductDetail();
         ShowToast({
           title: "Success!",
           description: res.data.message,
@@ -296,9 +297,7 @@ export default function EditShopProduct() {
                   <FormLabel>Tags</FormLabel>
 
                   <TagInput
-                    defaultValue={
-                      productDetail.tags.length > 0 ? productDetail.tags : ""
-                    }
+                    defaultValue={tags}
                     backgroundColor={"#2D3748"}
                     borderColor={"inherit"}
                     width={335}

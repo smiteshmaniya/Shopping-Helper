@@ -5,6 +5,10 @@ const shop_schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  profileImage: {
+    imageUrl: { type: String, default: "" },
+    publicId: { type: String, default: "" },
+  },
   email: {
     type: String,
     required: true,
