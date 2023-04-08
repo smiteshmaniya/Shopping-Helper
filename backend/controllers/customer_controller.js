@@ -279,6 +279,84 @@ module.exports = {
       });
     }
   },
+  get_pincode_controller: async (req, res) => {
+    {
+      try {
+        const user = await customer_schema.findOne({ _id: req.id });
+
+        if (user) {
+          res.status(200).json({
+            status: true,
+            statusCode: 400,
+            pincode: user.pincode,
+          });
+        } else {
+          res.status(400).json({
+            status: false,
+            statusCode: 400,
+            message: "invalid url",
+          });
+        }
+      } catch (error) {
+        res.status(500).json({
+          status: false,
+          statusCode: 500,
+          message: "Server error" + error,
+        });
+      }
+    }
+  },
+  update_customer: async (req, res) => {
+    try {
+      const _id = req.id;
+      const user = await customer_schema.findByIdAndUpdate(_id, req.body, {
+        new: true,
+      });
+      if (user) {
+        var response = {
+          status: true,
+          statusCode: 200,
+          message: "Updated successfully.",
+          userdata: user,
+        };
+        res.status(200).send(response);
+      } else {
+        var response = {
+          status: false,
+          statusCode: 400,
+          message: "Userdata not updated",
+        };
+        res.status(400).send(response);
+      }
+    } catch (error) {
+      res.status(500).send("server crashed.");
+    }
+  },
+
+  get_one_customer: async (req, res) => {
+    try {
+      const _id = req.id;
+      const user = await customer_schema.findById(_id);
+      if (user) {
+        var response = {
+          status: true,
+          statusCode: 200,
+          message: "User Detail found.",
+          userdata: user,
+        };
+        res.status(200).send(response);
+      } else {
+        var response = {
+          status: false,
+          statusCode: 400,
+          message: "User detail not found.",
+        };
+        res.status(400).send(response);
+      }
+    } catch (error) {
+      res.status(500).send("server crashed.");
+    }
+  },
 
   customer_update_controller: async (req, res) => {
     try {

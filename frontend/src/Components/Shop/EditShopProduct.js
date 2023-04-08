@@ -201,6 +201,7 @@ export default function EditShopProduct() {
       if (res.data.stautsCode === 200) {
         //setproductDetail(initalValue);
         getProductDetail();
+        setFiles([]);
         ShowToast({
           title: "Success!",
           description: res.data.message,
@@ -265,6 +266,8 @@ export default function EditShopProduct() {
                     name="description"
                     onChange={inputHandler}
                     value={productDetail.description}
+                    cols={10}
+                    rows={7}
                   />
                   {/* <Input type="text"  /> */}
                 </FormControl>
@@ -392,7 +395,7 @@ export default function EditShopProduct() {
                 }}
                 isLoading={isBtnLoading}
               >
-                Add Product
+                Update Product
               </Button>
             </Stack>
           </Center>

@@ -28,6 +28,7 @@ const AuthenticateCustomer = async (req, res, next) => {
     // console.log(result);
     else {
       req.id = result._id;
+      req.pincode = result.pincode;
       next();
     }
   } catch (err) {

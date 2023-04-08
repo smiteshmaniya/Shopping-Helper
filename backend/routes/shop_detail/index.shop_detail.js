@@ -14,7 +14,9 @@ const {
   shopkeeper_forgot_password,
   shopkeeper_forgot_verify_password,
   one_shop_controller,
+  get_address_controller,
 } = require("../../controllers/shop.controller");
+const AuthenticateCustomer = require("../../middleware/AuthenticateCustomer");
 
 routes.post("/shop_register", register_shop_controller);
 routes.get("/shopRegister/verify/:token", shop_register_verify);
@@ -23,8 +25,8 @@ routes.post(
   "/shopkeeper/forgot/verifypassword",
   shopkeeper_forgot_verify_password
 );
-
-routes.get("/shop_register", all_shops_controller);
+routes.get("/getAddress/:id", get_address_controller);
+routes.get("/shop_register", AuthenticateCustomer, all_shops_controller);
 
 // routes.get('/shop_register', AuthenticateShop, one_shop_controller);
 

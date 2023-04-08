@@ -14,17 +14,23 @@ import {
 
 import { FcDataProtection, FcOvertime, FcShop } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
+import NearbyShops from "./Customer/NearbyShops";
+import { userContext } from "../Routes/MainRoute";
+import { useState, useEffect, useContext } from "react";
 
 export default function Home() {
   const navigate = useNavigate();
+  const { isuser, setisUser } = useContext(userContext);
   return (
     <>
+      {console.log("isuser jj", isuser)}
       <Stack
-        minH={"100vh"}
+        minH={"75vh"}
+        pt={"5vh"}
         direction={{ base: "column", md: "row" }}
         justifyContent={"space-around"}
       >
-        <Flex p={8} align={"center"} justify={"center"}>
+        <Flex p={5} align={"center"} justify={"center"}>
           <Stack spacing={6} w={"full"} maxW={"lg"}>
             <Heading fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}>
               <Text
@@ -87,11 +93,17 @@ export default function Home() {
             w={"100%"}
             h={"100%"}
             borderRadius={"xl"}
-            src={`${process.env.PUBLIC_URL}/Images/home1	.png`}
+            src={`${process.env.PUBLIC_URL}/Images/home1.png`}
             // mr={{base: '32', md: '5'}}
           />
         </Flex>
       </Stack>
+      {localStorage.getItem("token") != null &&
+      localStorage.getItem("whoIsLoggedIn") != "shopkeeper" ? (
+        <NearbyShops />
+      ) : (
+        ""
+      )}
 
       <Stack align={"center"} p={{ lg: 5, md: 3 }}>
         <FeaturesSection />

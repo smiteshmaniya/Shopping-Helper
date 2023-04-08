@@ -259,6 +259,34 @@ module.exports = {
       });
     }
   },
+  get_address_controller: async (req, res) => {
+    try {
+      const result = await shop_schema.findById(
+        { _id: req.params.id },
+        {
+          shop_name: 0,
+          email: 0,
+          owner_name: 0,
+          phone_number: 0,
+          password: 0,
+          _id: 0,
+        }
+      );
+
+      if (result) {
+        res.status(200).json({
+          message: "Customer detail updated successfully",
+          userData: result,
+        });
+      } else {
+        res.status(400).json({
+          message: "Customer detail not found.",
+        });
+      }
+    } catch (error) {
+      res.status(500).send("error");
+    }
+  },
   logout_shop_controller: async (req, res) => {
     try {
       res.cookie("st", "", {
@@ -288,7 +316,7 @@ module.exports = {
   all_shops_controller: async (req, res) => {
     try {
       console.log("in......");
-      const registerDetails = await shop_schema.find({});
+      const registerDetails = await shop_schema.find({ pincode: req.pincode });
       if (registerDetails) {
         var response = {
           status: true,

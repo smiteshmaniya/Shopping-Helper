@@ -21,7 +21,7 @@ import { userContext } from "../Routes/MainRoute";
 import axios from "axios";
 import showToast from "./partials/showToast";
 export default function Login() {
-  const { setProfileImage } = useContext(userContext);
+  const { setProfileImage, setIsUser } = useContext(userContext);
   const toast = useToast();
   const navigate = useNavigate();
   const [isShopkeeper, setShopkeeper] = useState(false);
@@ -77,6 +77,7 @@ export default function Login() {
         );
         navigate("/");
         window.location.reload();
+        setIsUser(true);
       } else {
         showToast(toast, {
           title: "Loing Failed!", // this statusText is shows bad request if staus code is 400 like

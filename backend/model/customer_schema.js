@@ -23,6 +23,10 @@ const customer = new mongoose.Schema({
     type: String,
     minlength: 3,
   },
+  profileImage: {
+    imageUrl: { type: String, default: "" },
+    publicId: { type: String, default: "" },
+  },
   area: {
     type: String,
     default: "",

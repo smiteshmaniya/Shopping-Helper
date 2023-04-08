@@ -104,9 +104,13 @@ export default function Navbar() {
                           {" "}
                           <MenuItem>Home</MenuItem>{" "}
                         </Link>
+                        <Link to="/customerprofile">
+                          {" "}
+                          <MenuItem>Profile</MenuItem>{" "}
+                        </Link>
                         <Link to="/displayshops">
                           {" "}
-                          <MenuItem>View Shops</MenuItem>{" "}
+                          <MenuItem>Shops & Items</MenuItem>{" "}
                         </Link>
                         <Link to="/cart">
                           {" "}

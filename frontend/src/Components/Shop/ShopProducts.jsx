@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Product from "../partials/ProductCard";
-import { Flex } from "@chakra-ui/react";
+import { Center, Flex, Heading } from "@chakra-ui/react";
 import { API } from "../API/api_url";
 import { Link } from "react-router-dom";
 export default function ShopProducts() {
@@ -19,7 +19,19 @@ export default function ShopProducts() {
   };
   return (
     <div>
-      ShopProducts
+      <Center>
+        <Heading
+          mt={7}
+          lineHeight={1.1}
+          fontWeight={600}
+          fontSize={30}
+          mb={8}
+          textTransform={"capitalize"}
+        >
+          Shop Products
+        </Heading>
+      </Center>
+
       {/* {allProduct} */}
       {/* {allProduct.map((val) => console.log('hello'))} */}
       {/* <Products allProduct={allProduct} /> */}

@@ -64,11 +64,15 @@ const ListHeader = (props) => {
   );
 };
 
-export default function LargeWithNewsletter() {
+export default function Footer() {
   return (
     <Box
       bg={useColorModeValue("gray.50", "gray.900")}
       color={useColorModeValue("gray.700", "gray.200")}
+      // position={"fixed"}
+      // overflow={"auto"}
+      // bottom={0}
+      // width={"100%"}
     >
       <Container as={Stack} maxW={"6xl"} py={10}>
         <SimpleGrid

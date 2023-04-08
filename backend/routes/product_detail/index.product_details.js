@@ -14,6 +14,7 @@ const {
   get_all_products,
   delete_all,
   deleteProductImage,
+  get_product_and_shops,
 } = require("../../controllers/product.controller");
 const multer = require("multer");
 const path = require("path");
@@ -59,7 +60,7 @@ routes.get(
 );
 
 routes.get("/getproducts", get_all_products); // HERE add authenticate middleware
-
+routes.get("/searchProduct/:name", get_product_and_shops);
 routes.get("/productDetail/:product_id", one_product_controller);
 
 routes.put(

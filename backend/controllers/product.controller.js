@@ -2,6 +2,32 @@ const product_Schema = require("../model/product_schema");
 // const shop_schema = require('../../model/shopDetails/shop_schema')
 
 module.exports = {
+  get_product_and_shops: async (req, res) => {
+    try {
+      const productName = req.params.name;
+      const products = await product_Schema
+        .find({ name: productName })
+        .populate("shop_id");
+      if (products) {
+        console.log(products);
+        const response = {
+          status: true,
+          stautsCode: 200,
+          userdata: products,
+        };
+        res.status(200).send(response);
+      } else {
+        const response = {
+          status: false,
+          stautsCode: 400,
+          message: "user not exist.",
+        };
+        res.status(400).send(response);
+      }
+    } catch (e) {
+      res.status(500).send("sever crashed.");
+    }
+  },
   add_product_controller: async (req, res) => {
     try {
       console.log("inside add product controller");
