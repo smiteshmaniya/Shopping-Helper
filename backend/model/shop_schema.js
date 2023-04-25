@@ -9,6 +9,10 @@ const shop_schema = new mongoose.Schema({
     imageUrl: { type: String, default: "" },
     publicId: { type: String, default: "" },
   },
+  document: {
+    url: { type: String, default: "" },
+    publicId: { type: String, default: "" },
+  },
   email: {
     type: String,
     required: true,

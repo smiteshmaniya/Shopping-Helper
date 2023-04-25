@@ -57,14 +57,16 @@ export default function ShopKeeperProfile() {
   });
   const [profileImg, setProfileImg] = useState("");
   const [isUpdateUrl, setIsUpdateUrl] = useState(false);
+  const [initialDocumentUrl, setInitialDocumentUrl] = useState("");
+  const [document, setDocument] = useState("");
   useEffect(() => {
     getShopDetail();
   }, []);
 
-  const handleImage = async (e) => {
+  const handleImage = async (doc) => {
     try {
       const formData = new FormData();
-      formData.append("file", profileImg);
+      formData.append("file", doc);
       formData.append("upload_preset", "smiteshmaniya");
 
       // Make an AJAX upload request using Axios (replace Cloudinary URL below with your own)
@@ -102,6 +104,7 @@ export default function ShopKeeperProfile() {
         imageUrl: data.profileImage.imageUrl,
         publicId: data.profileImage.publicId,
       });
+      if (data.document) setInitialDocumentUrl(data.document.url);
       console.log("result is", result);
     } catch (err) {
       console.log("error...", err);
@@ -137,37 +140,64 @@ export default function ShopKeeperProfile() {
       setIsBtnLoading(true);
 
       let profileImageJson, compeleteUserDetail;
-      if (true) {
-        let imageData;
-        console.log("profileImage: ", profileImg);
-        imageData = await handleImage();
-        console.log("imageData", imageData);
+      let imageData, documentData;
+      console.log("profileImage: ", profileImg);
+      if (profileImg != null || profileImg != "") {
+        imageData = await handleImage(profileImg);
+        console.log("inside ...", profileImg);
+      }
+      if (document != null || document == "") {
+        console.log("inside document...");
+        documentData = await handleImage(document);
+        console.log("docu data:", documentData);
+      }
+      console.log("imageData", imageData);
 
-        if (imageData == null) {
-          profileImageJson = {
-            ...profileImage,
-          };
-        } else {
-          profileImageJson = {
-            imageUrl: imageData.data.url,
-            publicId: imageData.data.public_id,
-          };
+      if (imageData == null) {
+        profileImageJson = {
+          ...profileImage,
+        };
+      } else {
+        profileImageJson = {
+          imageUrl: imageData.data.url,
+          publicId: imageData.data.public_id,
+        };
+        localStorage.setItem("profileUrl", imageData.data.url);
+      }
 
-          localStorage.setItem("profileUrl", imageData.data.url);
+      if (document == null || document == "") {
+        //console.log("image...", profileImageJson);
+        compeleteUserDetail = {
+          ...shopDetail,
+          profileImage: profileImageJson,
+        };
+      } else {
+        if (documentData.data.format != "pdf") {
+          setIsBtnLoading(false);
+          return ShowToast({
+            title: "Upload PDF!",
+            description: "Please Upload PDF file!!",
+            status: "error",
+          });
         }
         console.log("image...", profileImageJson);
         compeleteUserDetail = {
           ...shopDetail,
           profileImage: profileImageJson,
+          document: {
+            url: documentData.data.url,
+            publicId: documentData.data.public_id,
+          },
         };
       }
+
       console.log("compelteuserdetail: ", compeleteUserDetail);
 
       const res = await axios.put(
         `${API}/api/shop_register`,
         compeleteUserDetail
       );
-      console.log("res is", res.data);
+      console.log("res is", res);
       setIsBtnLoading(false);
       if (res.data.statusCode === 200) {
         setShopDetail(initalData);
@@ -180,10 +210,11 @@ export default function ShopKeeperProfile() {
         window.location.reload();
       }
     } catch (err) {
+      console.log(err);
       setIsBtnLoading(false);
       ShowToast({
         title: "Error!",
-        description: err.response.data.message,
+        description: "err.response.data.message",
         status: "error",
       });
     }
@@ -238,7 +269,6 @@ export default function ShopKeeperProfile() {
                   value={shopDetail.shop_name}
                 />
               </FormControl>
-
               <FormControl id="owner_name" isRequired>
                 <FormLabel>Owner Name</FormLabel>
                 <Input
@@ -247,6 +277,21 @@ export default function ShopKeeperProfile() {
                   onChange={inputHandler}
                   value={shopDetail.owner_name}
                 />
+              </FormControl>
+              <FormControl id="email" isRequired>
+                <FormLabel>Document</FormLabel>
+                <Input
+                  type="file"
+                  name="file"
+                  onChange={(e) => setDocument(e.target.files[0])}
+                />
+                <a
+                  style={{ fontSize: "10px" }}
+                  target="_blank"
+                  href={initialDocumentUrl}
+                >
+                  View Document
+                </a>
               </FormControl>
               <FormControl id="phone_number" isRequired>
                 <FormLabel>Phone Number</FormLabel>
@@ -257,7 +302,6 @@ export default function ShopKeeperProfile() {
                   value={shopDetail.phone_number}
                 />
               </FormControl>
-
               <FormControl id="address" isRequired>
                 <FormLabel>Address</FormLabel>
                 <Input
@@ -267,7 +311,6 @@ export default function ShopKeeperProfile() {
                   value={shopDetail.address}
                 />
               </FormControl>
-
               <Stack spacing={5} direction="row">
                 <FormControl id="area" isRequired>
                   <FormLabel>area</FormLabel>
@@ -297,7 +340,6 @@ export default function ShopKeeperProfile() {
                   />
                 </FormControl>
               </Stack>
-
               <Stack spacing={5} direction="row">
                 <FormControl id="start_time" isRequired>
                   <FormLabel>Shop Starting Time</FormLabel>
@@ -318,7 +360,6 @@ export default function ShopKeeperProfile() {
                   />
                 </FormControl>
               </Stack>
-
               <Stack spacing={10} pt={2}>
                 <Button
                   loadingText="Submitting"

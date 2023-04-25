@@ -51,6 +51,7 @@ const ShopRegister = () => {
   };
   const [shopDetail, setShopDetail] = useState(initalData);
   const [isBtnLoading, setIsBtnLoading] = useState(false);
+  const [document, setDocument] = useState("");
 
   // // This will give a message in type of alert that can be remove in 3s
   const ShowToast = (details) => {
@@ -74,6 +75,26 @@ const ShopRegister = () => {
         [name]: value,
       };
     });
+  };
+
+  const handleDocument = async (e) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", document);
+      formData.append("upload_preset", "smiteshmaniya");
+
+      // Make an AJAX upload request using Axios (replace Cloudinary URL below with your own)
+      const fileData = await axios.post(
+        "https://api.cloudinary.com/v1_1/dhybpb2nf/image/upload",
+        formData,
+        {
+          headers: { "X-Requested-With": "XMLHttpRequest" },
+        }
+      );
+      return fileData;
+    } catch (error) {
+      return null;
+    }
   };
 
   const onsubmit = async () => {
@@ -100,8 +121,42 @@ const ShopRegister = () => {
           status: "error",
         });
       }
+
+      if (document == null) {
+        return showToast(toast, {
+          title: "Signup unsuccessfull",
+          description: "Please Add Document!",
+          status: "error",
+        });
+      }
+
+      var documentData = await handleDocument();
+      console.log("document url:", documentData);
+
+      // if (documentData == null) {
+      //   return showToast(toast, {
+      //     title: "Signup unsuccessfull",
+      //     description: "Please Add Document!",
+      //     status: "error",
+      //   });
+      // }
+
+      if (documentData.data.format != "pdf") {
+        return ShowToast({
+          title: "Upload PDF!",
+          description: "Please Upload PDF file!!",
+          status: "error",
+        });
+      }
+
       setIsBtnLoading(true);
-      const res = await axios.post(`${API}/api/shop_register`, shopDetail);
+      const res = await axios.post(`${API}/api/shop_register`, {
+        ...shopDetail,
+        document: {
+          url: documentData.data.url,
+          publicId: documentData.data.public_id,
+        },
+      });
       console.log("res is", res.data);
       setIsBtnLoading(false);
       if (res.data.statusCode === 200) {
@@ -142,6 +197,15 @@ const ShopRegister = () => {
           name="email"
           onChange={inputHandler}
           value={shopDetail.email}
+        />
+      </FormControl>
+
+      <FormControl id="email" isRequired>
+        <FormLabel>Document</FormLabel>
+        <Input
+          type="file"
+          name="file"
+          onChange={(e) => setDocument(e.target.files[0])}
         />
       </FormControl>
 

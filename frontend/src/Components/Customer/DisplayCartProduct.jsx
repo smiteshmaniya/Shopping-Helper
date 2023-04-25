@@ -6,7 +6,7 @@ import Cart_product_card from "../partials/Cart_product_card";
 import { ArrowForwardIcon, TimeIcon } from "@chakra-ui/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { API } from "../API/api_url";
-
+import showToast from "../partials/showToast";
 import {
   Modal,
   ModalOverlay,
@@ -30,9 +30,11 @@ import {
   InputLeftElement,
   Input,
   InputRightElement,
+  useToast,
 } from "@chakra-ui/react";
 
 export default function DisplayCartProduct() {
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [cartProducts, setCartProducts] = useState([]);
   const { shop_id } = useParams();
@@ -40,6 +42,9 @@ export default function DisplayCartProduct() {
   const [amount, setAmount] = useState(0);
   const [productDetails, setProductDetails] = useState(""); // array of all product that added in cart
   const [orderData, setOrderData] = useState({});
+  useEffect(() => {
+    loadScript("https://checkout.razorpay.com/v1/checkout.js");
+  });
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -74,6 +79,27 @@ export default function DisplayCartProduct() {
 
   const handleInputChange = (e) => {
     setPickupTime(e.target.value);
+  };
+
+  const isStockAvailable = async () => {
+    const data = productDetails.map(async (val, index) => {
+      const productDetail = await axios.get(
+        `${API}/api/productDetail/${val.productId}`
+      );
+      console.log(
+        "stock",
+        productDetail.data.userdata.stock,
+        " ",
+        val.quantity
+      );
+      if (productDetail.data.userdata.stock - val.quantity >= 0) {
+        return true;
+      } else {
+        console.log("instai......");
+        return false;
+      }
+    });
+    return data;
   };
 
   // Place order
@@ -121,6 +147,75 @@ export default function DisplayCartProduct() {
     }
   };
 
+  function loadScript(src) {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  const displayRazorpay = async () => {
+    Promise.all(await isStockAvailable())
+      .then(async (res) => {
+        console.log("result", res);
+        let checker = (arr) => arr.every((v) => v === true);
+        const istrue = checker(res);
+        return istrue;
+      })
+      .then(async (istrue) => {
+        if (!istrue) {
+          alert("Stock is not available.");
+          return;
+        } else {
+          const data = await axios.post(`${API}/api/razorpay`, {
+            amount: amount * 100,
+            productDetails,
+          });
+          //.then((t) => t.json());
+          console.log(data);
+          const options = {
+            key: "rzp_test_7WR4xIlnq2U8Bk",
+            currency: data.data.currency,
+            amount: data.data.amount,
+            name: "Learn Code Online",
+            description: "Wallet Transaction",
+            image: "http://localhost:1337/logo.png",
+            order_id: data.data.id,
+            handler: async function (response) {
+              alert("PAYMENT ID ::" + response.razorpay_payment_id);
+              alert("ORDER ID :: " + response.razorpay_order_id);
+              await PlaceOrder();
+            },
+
+            prefill: {
+              name: "Anirudh Jwala",
+              email: "anirudh@gmail.com",
+              contact: "9999999999",
+            },
+            modal: {
+              ondismiss: function () {
+                showToast(toast, {
+                  title: "Payment failed",
+                  description: "Payment failed due to some error.",
+                  status: "error",
+                });
+              },
+            },
+          };
+          console.log(".............");
+          const paymentObject = new window.Razorpay(options);
+          paymentObject.open();
+        }
+      });
+  };
+
   return (
     <>
       {/* This is for opening model on success fully order placed */}
@@ -163,12 +258,12 @@ export default function DisplayCartProduct() {
                   color={useColorModeValue("gray.700", "gray.400")}
                   px={3}
                 >
-                  <Box mt={1}>
+                  {/* <Box mt={1}>
                     <Text fontWeight={600} as="span">
                       Order Id:{" "}
                     </Text>
                     <Text as="span"> {orderData._id} </Text>
-                  </Box>
+                  </Box> */}
 
                   <Box mt={1}>
                     <Text fontWeight={600} as="span">
@@ -296,7 +391,7 @@ export default function DisplayCartProduct() {
                 variant="solid"
                 width={"100%"}
                 my={5}
-                onClick={PlaceOrder}
+                onClick={displayRazorpay}
                 isDisabled={pickupTime ? false : true}
                 boxShadow={"xl"}
               >

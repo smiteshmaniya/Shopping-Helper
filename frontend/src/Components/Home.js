@@ -59,29 +59,33 @@ export default function Home() {
               save the time of customer rushing to local shops for their daily
               needed products.
             </Text>
-            <Stack direction={{ base: "column", md: "row" }} spacing={4}>
-              <Button
-                rounded={"full"}
-                bg={"blue.400"}
-                color={"white"}
-                _hover={{
-                  bg: "blue.500",
-                }}
-                onClick={() => {
-                  navigate("/displayshops");
-                }}
-              >
-                Shop Now
-              </Button>
-              <Button
-                rounded={"full"}
-                onClick={() => {
-                  navigate("/cart");
-                }}
-              >
-                Go to Cart
-              </Button>
-            </Stack>
+            {localStorage.getItem("whoIsLoggedIn") != "shopkeeper" ? (
+              <Stack direction={{ base: "column", md: "row" }} spacing={4}>
+                <Button
+                  rounded={"full"}
+                  bg={"blue.400"}
+                  color={"white"}
+                  _hover={{
+                    bg: "blue.500",
+                  }}
+                  onClick={() => {
+                    navigate("/displayshops");
+                  }}
+                >
+                  Shop Now
+                </Button>
+                <Button
+                  rounded={"full"}
+                  onClick={() => {
+                    navigate("/cart");
+                  }}
+                >
+                  Go to Cart
+                </Button>
+              </Stack>
+            ) : (
+              ""
+            )}
           </Stack>
         </Flex>
         <Flex alignItems={"center"} justifyItems={"center"} p={5}>

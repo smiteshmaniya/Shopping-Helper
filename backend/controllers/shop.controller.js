@@ -43,6 +43,7 @@ module.exports = {
         pincode,
         start_time,
         end_time,
+        document,
       } = req.body;
       if (
         !shop_name ||
@@ -55,7 +56,8 @@ module.exports = {
         !city ||
         !pincode ||
         !start_time ||
-        !end_time
+        !end_time ||
+        !document
       ) {
         return res.status(400).json({
           status: true,
@@ -85,6 +87,7 @@ module.exports = {
         pincode,
         start_time,
         end_time,
+        document,
       });
 
       const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY);

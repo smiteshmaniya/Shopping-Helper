@@ -25,8 +25,12 @@ const axios = require("axios");
 const ShowImage = (props) => {
   return (
     <>
-      <HStack spacing="24px">
-        <img src={URL.createObjectURL(props.files)} width={100} />
+      <HStack spacing="24px" marginBottom={"3px"}>
+        <img
+          style={{ borderRadius: "4px", height: "70px" }}
+          src={URL.createObjectURL(props.files)}
+          width={100}
+        />
         <Box>
           <Button
             onClick={props.deleteImage}
@@ -186,6 +190,7 @@ export default function AddProduct() {
       tags,
     };
     console.log("Product Detail: ", productDetail_split);
+
     try {
       const res = await axios.post(
         `${API}/api/productDetail`,
@@ -209,6 +214,31 @@ export default function AddProduct() {
       ShowToast({
         title: "Error!",
         description: err.response.data.message,
+        status: "error",
+      });
+    }
+  };
+
+  const handleImages = async (e) => {
+    console.log("e...", e);
+    if (files.length >= 5) {
+      return ShowToast({
+        title: "Number of Images",
+        description: "You can not upload more than 5 images.",
+        status: "error",
+      });
+    }
+    let split = e.target.value.split(".");
+    if (
+      split[split.length - 1] == "jpg" ||
+      split[split.length - 1] == "jpeg" ||
+      split[split.length - 1] == "png"
+    ) {
+      setFiles((preImg) => [...preImg, e.target.files[0]]);
+    } else {
+      ShowToast({
+        title: "Invalid File",
+        description: "Please Insert Image!!",
         status: "error",
       });
     }
@@ -316,9 +346,7 @@ export default function AddProduct() {
                     type="file"
                     style={{ display: "none" }}
                     name="files"
-                    onChange={(e) =>
-                      setFiles((preImg) => [...preImg, e.target.files[0]])
-                    }
+                    onChange={handleImages}
                   />
                 </FormControl>
                 <FormControl>

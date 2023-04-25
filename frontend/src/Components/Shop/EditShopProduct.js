@@ -27,7 +27,11 @@ const ShowImage = (props) => {
   return (
     <>
       <HStack spacing="24px">
-        <img src={URL.createObjectURL(props.files)} width={100} />
+        <img
+          style={{ borderRadius: "4px", height: "70px" }}
+          src={URL.createObjectURL(props.files)}
+          width={100}
+        />
         <Box>
           <Button
             onClick={props.deleteImage}
@@ -46,9 +50,13 @@ const ShowImage = (props) => {
 
 const ShowDefaultImage = (props) => {
   return (
-    <HStack spacing="24px">
+    <HStack spacing="24px" marginBottom={"3px"}>
       {console.log("i.........")}
-      <img src={props.image.imageUrl} width={100} />
+      <img
+        style={{ borderRadius: "4px", height: "70px" }}
+        src={props.image.imageUrl}
+        width={100}
+      />
       <Box>
         <Button onClick={props.deleteDefaultImage} fontSize={10} h={5}>
           {" "}
@@ -226,6 +234,33 @@ export default function EditShopProduct() {
     }
   };
 
+  const handleImages = async (e) => {
+    console.log("e...", e);
+    if (files.length + defaultImages.length >= 5) {
+      return ShowToast({
+        title: "Number of Images",
+        description: "You can not upload more than 5 images.",
+        status: "error",
+      });
+    }
+    let split = e.target.value.split(".");
+    if (
+      split[split.length - 1] == "jpg" ||
+      split[split.length - 1] == "jpeg" ||
+      split[split.length - 1] == "png"
+    ) {
+      console.log("jpg file");
+      setFiles((preImg) => [...preImg, e.target.files[0]]);
+    } else {
+      ShowToast({
+        title: "Invalid File",
+        description: "Please Insert Image!!",
+        status: "error",
+      });
+    }
+    console.log("jpg file", split[1]);
+  };
+
   return (
     <>
       <Flex
@@ -331,9 +366,7 @@ export default function EditShopProduct() {
                     type="file"
                     style={{ display: "none" }}
                     name="files"
-                    onChange={(e) =>
-                      setFiles((preImg) => [...preImg, e.target.files[0]])
-                    }
+                    onChange={handleImages}
                   />
                 </FormControl>
                 <FormControl>

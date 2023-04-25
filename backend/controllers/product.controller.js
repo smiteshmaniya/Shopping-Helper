@@ -1,12 +1,13 @@
+const product_detail = require("../model/product_schema");
 const product_Schema = require("../model/product_schema");
 // const shop_schema = require('../../model/shopDetails/shop_schema')
-
+const Razorpay = require("razorpay");
 module.exports = {
   get_product_and_shops: async (req, res) => {
     try {
       const productName = req.params.name;
       const products = await product_Schema
-        .find({ name: productName })
+        .find({ name: { $regex: `(?i)${productName}` } })
         .populate("shop_id");
       if (products) {
         console.log(products);
@@ -20,7 +21,7 @@ module.exports = {
         const response = {
           status: false,
           stautsCode: 400,
-          message: "user not exist.",
+          message: "Product not found.",
         };
         res.status(400).send(response);
       }
@@ -159,6 +160,23 @@ module.exports = {
       res.status(500).send("server crashed.");
     }
   },
+  getBySearchController: async (req, res) => {
+    try {
+      const searchInput = req.params.search;
+      const result = await product_detail.find({
+        name: { $regex: `(?i)${searchInput}` },
+      });
+      var response = {
+        status: true,
+        statusCode: 200,
+        message: "Product founded...",
+        products: result,
+      };
+      res.status(200).send(response);
+    } catch (error) {
+      res.status(500).send("server error...");
+    }
+  },
   one_product_controller: async (req, res) => {
     try {
       const product_id = req.params.product_id;
@@ -294,5 +312,54 @@ module.exports = {
     } catch (error) {
       res.send("error");
     }
+  },
+  razorPayController: async (req, res) => {
+    console.log("body..", req.body);
+    const result = await req.body.productDetails.map(async (val) => {
+      try {
+        let product = await product_Schema.findById(val.productId);
+        console.log("product", product);
+        if (product.stock - val.quantity > 0) {
+          product.stock = product.stock - val.quantity;
+          await product.save();
+          return;
+        }
+      } catch (error) {
+        res.status(500).send("inside loop error");
+      }
+    });
+
+    Promise.all(result)
+      .then(async (resultResponse) => {
+        const shortid = require("shortid");
+        const razorpay = new Razorpay({
+          key_id: "rzp_test_7WR4xIlnq2U8Bk",
+          key_secret: "gLZvkH4FyVixmdb9UIATPzKJ",
+        });
+        const payment_capture = 101;
+        const amount = req.body.amount;
+        const currency = "INR";
+        const options = {
+          amount: amount,
+          currency,
+          receipt: shortid.generate(),
+          payment_capture,
+        };
+        try {
+          const response = await razorpay.orders.create(options);
+          console.log(response);
+          res.status(200).send({
+            id: response.id,
+            currency: response.currency,
+            amount: response.amount,
+          });
+        } catch (error) {
+          console.log(error);
+          res.status(400).send(error);
+        }
+      })
+      .catch((error) => {
+        res.status(500).send("error...");
+      });
   },
 };

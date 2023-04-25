@@ -14,7 +14,9 @@ const {
   get_all_products,
   delete_all,
   deleteProductImage,
+  razorPayController,
   get_product_and_shops,
+  getBySearchController,
 } = require("../../controllers/product.controller");
 const multer = require("multer");
 const path = require("path");
@@ -56,12 +58,14 @@ routes.get("/getShopProducts/:shop_id", get_all_shop_product_controller);
 routes.get(
   "/getShopProducts",
   AuthenticateShop,
-  get_all_shop_product_controller1
+  get_all_shop_product_controller1,
+  getBySearchController
 );
 
 routes.get("/getproducts", get_all_products); // HERE add authenticate middleware
 routes.get("/searchProduct/:name", get_product_and_shops);
 routes.get("/productDetail/:product_id", one_product_controller);
+routes.get("/productDetail/getbysearch/:search", getBySearchController);
 
 routes.put(
   "/productDetail/:product_id",
@@ -78,5 +82,7 @@ routes.delete(
 routes.delete("/deleteProduct", delete_all);
 
 //routes.put("/productDetail/deleteImage", deleteProductImage);
+
+routes.post("/razorpay", razorPayController);
 
 module.exports = routes;
